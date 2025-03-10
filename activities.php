@@ -16,7 +16,11 @@ if (isset($_POST['apply'])) {
     if ($check->num_rows > 0) {
         $message = "You have already applied for this activity!";
     } else {
-        $conn->query("INSERT INTO applications (user_id, activity_id, status) VALUES ($user_id, $activity_id, 'Pending')");
+        // Insert into the database without credentials
+        $stmt = $conn->prepare("INSERT INTO applications (user_id, activity_id, status) VALUES (?, ?, 'Pending')");
+        $stmt->bind_param("ii", $user_id, $activity_id);
+        $stmt->execute();
+
         $message = "Applied successfully!";
     }
 }
@@ -26,6 +30,7 @@ $activities = $conn->query("SELECT a.*,
     (SELECT status FROM applications WHERE user_id=$user_id AND activity_id=a.id LIMIT 1) as user_status 
     FROM activities a");
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,7 +61,7 @@ $activities = $conn->query("SELECT a.*,
             <?php if ($row['user_status']): ?>
                 <p class="text-yellow-600 font-semibold">Status: <?php echo $row['user_status']; ?></p>
             <?php else: ?>
-                <!-- Apply button -->
+                <!-- Apply form without file upload -->
                 <form method="POST" class="mt-2">
                     <input type="hidden" name="activity_id" value="<?php echo $row['id']; ?>">
                     <button name="apply" class="bg-blue-500 text-white px-4 py-2 rounded">Apply</button>

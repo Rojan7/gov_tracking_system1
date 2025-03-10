@@ -22,7 +22,7 @@ if (isset($_POST['update_status'])) {
 $activities = $conn->query("SELECT * FROM activities");
 
 // Fetch all applications with user and activity info
-$applications = $conn->query("SELECT a.id as app_id, u.name as user_name, act.title as activity_title, a.status 
+$applications = $conn->query("SELECT a.id as app_id, u.name as user_name, act.title as activity_title, a.status
                               FROM applications a
                               JOIN users u ON a.user_id = u.id
                               JOIN activities act ON a.activity_id = act.id
@@ -109,4 +109,3 @@ $applications = $conn->query("SELECT a.id as app_id, u.name as user_name, act.ti
 
 </body>
 </html>
-
